@@ -16,6 +16,12 @@ st.set_page_config(layout="wide")
 try:
     # Use st.secrets to access the Firebase configuration for deployment
     firebase_config = st.secrets["firebase"]
+    
+    # Handle the private key, which is a multiline string in the TOML file.
+    # We must replace the newline characters to make it a valid argument.
+    if isinstance(firebase_config.get("private_key"), str):
+        firebase_config["private_key"] = firebase_config["private_key"].replace("\\n", "\n")
+
     cred = credentials.Certificate(firebase_config)
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
