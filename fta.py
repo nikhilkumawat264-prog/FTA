@@ -13,33 +13,16 @@ st.set_page_config(layout="wide")
 # and various visualization and analysis features.
 
 # --- Firebase Setup (MANDATORY) ---
-# Replace this with your actual Firebase project configuration.
-# You can get this from your Firebase project settings.
-firebase_config = {
-  "type": "service_account",
-  "project_id": "finance-tracker-nik",
-  "private_key_id": "5d24bcf78d496a7e7c6adb574b3ae3e7b1807563",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDAb87HM9vN7mMh\nkEV/c69F+RfxqiGFdpt56ym+80qBsBUfl7bO4nbIHrT8FkaW9C222p5j/tFJaXMb\no2QYvjRfZg0XKot+CJ70Jh6HAIyLhMD7afJ/Meo5VxHgTN44DU4YPbH94x5uQX8l\nC7BdLrGp5aslPQ9IfiBfDNdTd1Mkjpn2WwtaBVvrNLE4IvpMhO1PI17mkv7wRjgO\nUB+yteRRKryWufoZufSGQ2gFsVQQRg5mzANfUD+hWiDNWrZNptT3IVkKKUQlxBIT\nbtuzxbhCwlpEu0aoJGEwo2EdCYYp5z7XB4WrnxlQEm1dOT5ouYd8ByFa9GNvLfW6\nYEbCiezPAgMBAAECggEAGcnB9ZsC/T1Rholtbs+DcQaZCVcpx9dlrXhwrziuRuPg\naMvtgRsDHP1UdqXLjuYpDCSO7kqTJFnfxZfnTZOLtC8aWPzoFZs1JfXHyIKv0vCW\n5fpEN3xqbYW4DQ1wCCXsTb5S0HmztcXMMpw25b3grCptfX+JwUa5stMnNfW7LB4+\ncuX6RX/vHMRT1Xr1N5ZcAHfli0X9JCGqv2a5znbFoMOzYIl5uhY5c+fecWv1xW1I\nlDF3IIW3AqQeJAyt6BobPIMYko3/cnbmWiVQEsxtsia6TuU2CsLTb1O8ar0ZYny2\n0lg+3nFd1SeRiB+dKw0hy5SpWlznseVgZf3fF6XyKQKBgQDshF0A1ckvtNap8fti\nzXLLS7H1TX/+c8cWLff0FRtMfDqBBn5tv8gVvkxTnPUzD3Ct96EQOETmYJEufkqH\n/hfI3jYprEAkJ0gWH7J5+yZ+EXtc/K42bjKGCND0cQUHZTgtJEus3tcPExLoM8n+\nAuGIIZuG+/0qvVkonr53jTdwpwKBgQDQSeK5QAkHGZlfYdKwnxL2BKuUJn0xmUHw\nEtED+3JHC2wy3r/Y6LeopdoCFKDtab0cLs5GtUfnjCkDU7BEjshFbgJXYkQvnnUy\npgyfR8WlTDaM8+ISE/8r4P/yq4lACZMIkqdKarBGj66KBiy9aZwZ25+82nZD4Qko\nmHRKfi2/mQKBgGofohNj2ZfcTo2GlENq590sI7drhMjJbkUXbzBH4C3bd+y42zWn\nXcHT1y+VN7gnb2m/uLcsaE3uenYgGJUYf9eTTT45mbYfIgs7QbvV4xmiAnZgslKd\n83GMtyVXKOh+lEw9Au+YNWsAJfWmdzXQWR3Z5o0UuC3bNAwz3kaKSJv1AoGAO8jp\nXdjmfnY3kqwmaHHQZHMkuIpvptvhlEIiYm06+O9raBKNqHnrtWmdcLlxE5QlJsC8\njokcEXcmkoDj+FmvXFZeL6zR+4UVCKumtdVJAtAkXELoYd4BgRu8+2+HHq1g2bYW\ndIK5BBfbtlxdXSTCHJ3wdKmUBpnCIjfYMUWUZgkCgYBPFkBKo+RBpq9vJYaQdr0q\nLqfFMiW0GfOb41E7GIsslCRfeBBBM/b9W7aimTskR60VhyypSpdVE3SChDZIPFZC\nt9MUM93bxzuJftpZ5RgyAOFXaPXUAae6fDBJ7wVWQQPru12Kxr8zUa4f6+tFLE3N\nfIHlYv0lcg1C3S6eHCWzTw==\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-fbsvc@finance-tracker-nik.iam.gserviceaccount.com",
-  "client_id": "115678921324816659986",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40finance-tracker-nik.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
-
-
-# Check if Firebase app is already initialized
-if not firebase_admin._apps:
-    try:
-        cred = credentials.Certificate(firebase_config)
+try:
+    # Use st.secrets to access the Firebase configuration for deployment
+    firebase_config = st.secrets["firebase"]
+    cred = credentials.Certificate(firebase_config)
+    if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
-    except Exception as e:
-        st.error(f"Error initializing Firebase. Please ensure your firebase_config is correct. Details: {e}")
-        st.stop() # Stop the app if initialization fails
-
-db = firestore.client()
+    db = firestore.client()
+except Exception as e:
+    st.error(f"Error initializing Firebase. Please ensure your firebase_config is correct and is saved as a secrets.toml file in the .streamlit directory. Details: {e}")
+    st.stop()
 # End of Firebase Setup
 
 def get_current_user_id():
